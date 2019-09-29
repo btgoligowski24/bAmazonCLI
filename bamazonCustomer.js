@@ -10,7 +10,8 @@ connection.connect(error => {
 });
 
 function showProducts() {
-    connection.query("SELECT item_id, product_name, price FROM products", (error, data) => {
+    connection.query("SELECT * FROM products", (error, data) => {
+        if (error) throw error;
         console.table("Products", data);
         console.log();
         doWhat();
