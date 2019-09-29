@@ -20,7 +20,7 @@ The app is organized by .js files and within each file, by functions. For each f
     * `node bamazonSupervisor.js`
 5. Voila, you've used the app. It should print the response to the console (command prompt).
 
-* [Video Demonstration of the App]()
+* [Video Demonstration of the App](https://youtu.be/wB8GXKPtNvQ)
 
 ## Technology Used
 * Node.js
