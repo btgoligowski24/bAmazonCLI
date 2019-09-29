@@ -27,7 +27,7 @@ function managerOptions() {
                 addInventory();
                 break;
             case "Add New Product":
-                whatProduct();
+                addProduct();
                 break;
             case "Log Out":
                 connection.end();
@@ -38,7 +38,7 @@ function managerOptions() {
 
 function showProducts() {
     console.log();
-    connection.query("SELECT * FROM products", (error, data) => {
+    connection.query("SELECT item_id, product_name, department, price, stock_quantity FROM products", (error, data) => {
         if (error) throw error;
         console.table("Products", data);
         console.log();
@@ -48,7 +48,7 @@ function showProducts() {
 
 function lowInventory() {
     console.log();
-    connection.query("SELECT * FROM products WHERE stock_quantity < 5", (error, data) => {
+    connection.query("SELECT item_id, product_name, department, price, stock_quantity FROM products WHERE stock_quantity < 5", (error, data) => {
         if (error) throw error;
         console.table("Low Inventory Products", data);
         console.log();
@@ -86,7 +86,7 @@ function updateProduct(qty, prodId, newQty, item) {
     })
 }
 
-function whatProduct() {
+function addProduct() {
     inquirer.prompt([{
         type: "input",
         message: "What is the name of the product you are adding?",
@@ -110,11 +110,11 @@ function whatProduct() {
             price: answers.price,
             stock_quantity: answers.quantity
         }
-        addProduct(newProduct);
+        createProduct(newProduct);
     })
 }
 
-function addProduct(newProdObj) {
+function createProduct(newProdObj) {
     connection.query("INSERT INTO products SET ?", newProdObj, (error, data) => {
         if (error) throw error;
         console.log("\nYou successfully added " + newProdObj.product_name + " to the list of products we sell!!!\n");

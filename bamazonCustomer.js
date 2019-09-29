@@ -10,7 +10,7 @@ connection.connect(error => {
 });
 
 function showProducts() {
-    connection.query("SELECT * FROM products", (error, data) => {
+    connection.query("SELECT item_id, product_name, department, price, stock_quantity FROM products", (error, data) => {
         if (error) throw error;
         console.table("Products", data);
         console.log();
@@ -65,9 +65,13 @@ function getProductInfo(dataObj) {
 }
 
 function updateProduct(qty, prodId, newQty, price) {
-    connection.query("UPDATE products SET stock_quantity = ? WHERE item_id = ?", [newQty, prodId], (error, data) => {
+    let cost = qty * price;
+    let prodUpdates = {
+        stock_quantity: newQty,
+        product_sales: cost
+    }
+    connection.query("UPDATE products SET ? WHERE item_id = ?", [prodUpdates, prodId], (error, data) => {
         if (error) throw error;
-        let cost = qty * price;
         console.log("\nYou just paid $" + cost + " for your product(s)!\n");
         showProducts();
     })

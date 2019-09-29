@@ -9,32 +9,22 @@ CREATE TABLE products (
     product_name VARCHAR(150) NOT NULL,
     department VARCHAR(50) NOT NULL,
     price DECIMAL(10, 2) DEFAULT "0.01",
-    stock_quantity INT DEFAULT "0"
+    stock_quantity INT DEFAULT "0"    
     );
+    
+ALTER TABLE products
+ADD COLUMN product_sales DECIMAL(10, 2) NULL DEFAULT "0.00";
+    
+CREATE TABLE departments (
+department_id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+department_name VARCHAR(50) NOT NULL,
+overhead_costs DECIMAL(10,2) NOT NULL DEFAULT "10.00"
+); 
     
 SELECT * FROM products;
 
-SELECT artist, COUNT(*) as numTimes FROM top5000 GROUP BY artist HAVING numTimes > 1;
+SELECT item_id, product_name, price, stock_quantity FROM products WHERE stock_quantity < 5;
 
-SELECT * FROM top5000 WHERE releaseYear BETWEEN 1950 AND 1960;
+SELECT * FROM departments;
 
-SELECT 
-    *
-FROM
-    top5000
-WHERE
-    artist = 'Queen';
-    
-    CREATE TABLE topAlbums (
-	position INT NOT NULL PRIMARY KEY,
-    artist VARCHAR(100) NULL,
-    title VARCHAR(100) NULL,
-    releaseYear INTEGER NULL,
-    aggregateRating DECIMAL(10, 4) NULL,
-    usRating DECIMAL(10, 4) NULL,
-    ukRating DECIMAL(10, 4) NULL,
-    euRating DECIMAL(10, 4) NULL,
-    restWorldRating DECIMAL(10, 4) NULL
-    );
-    
-    SELECT top5000.releaseYear as "Year: ", topAlbums.position as "Album Position: ", top5000.artist as "Artist: ", top5000.title as "Song: ", topAlbums.title as "Album: " FROM top5000 INNER JOIN topAlbums ON top5000.releaseYear = topAlbums.releaseYear AND top5000.artist = topAlbums.artist WHERE top5000.artist = "Queen" ORDER BY top5000.releaseYear, topAlbums.title;
+SELECT d.department_id, d.department_name, d.overhead_costs, SUM(p.product_sales) AS "product_sales", (SUM(p.product_sales) - d.overhead_costs) AS "total_profit" FROM departments AS d LEFT JOIN products AS p ON p.department = d.department_name GROUP BY d.department_id ORDER BY d.department_id;
