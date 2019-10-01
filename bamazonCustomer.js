@@ -38,28 +38,60 @@ function doWhat() {
 
 function whichProduct() {
     inquirer.prompt([{
-        type: "number",
+        type: "input",
         message: "What product would you like to buy? (Choose using the item_id number)",
-        name: "productId"
-    }, {
-        type: "number",
-        message: "How many would you like to buy?",
-        name: "quantity"
+        name: "productId",
+        validate: function (value) {
+            if (!isNaN(value) && value > 0) {
+                return true;
+            }
+            return "Please enter a numerical value greater than 0";
+        }
     }]).then(answers => {
-        getProductInfo(answers);
+        validateProductSelection(answers.productId);
     })
 }
 
-function getProductInfo(dataObj) {
-    connection.query("SELECT stock_quantity, price FROM products WHERE item_id = ?", dataObj.productId, (error, data) => {
+function validateProductSelection(productId) {
+    connection.query("SELECT * FROM products WHERE item_id = ?", productId, (error, data) => {
+        if (data.length === 0) {
+            console.log("\nYou must choose a valid item!\n");
+            whichProduct();
+        } else {
+            validProductHowMany(productId);
+        }
+    })
+}
+
+function validProductHowMany(productId) {
+    inquirer.prompt([{
+        type: "input",
+        message: "How many would you like to buy?",
+        name: "quantity",
+        validate: function (value) {
+            if (!isNaN(value)) {
+                if (value > 0) {
+                    return true;
+                }
+                return "You must choose a number greater than 0";
+            }
+            return "Please enter a numerical value";
+        }
+    }]).then(answers => {
+        getProductInfo(productId, answers.quantity);
+    })
+}
+
+function getProductInfo(productId, quantity) {
+    connection.query("SELECT item_id, stock_quantity, price FROM products WHERE item_id = ?", productId, (error, data) => {
         if (error) throw error;
         let onHandQty = data[0].stock_quantity;
-        if (dataObj.quantity > onHandQty) {
+        if (quantity > onHandQty) {
             console.log("\nInsufficient Quantity!!!\n");
             showProducts();
         } else {
-            let newQty = onHandQty - dataObj.quantity;
-            updateProduct(dataObj.quantity, dataObj.productId, newQty, data[0].price);
+            let newQty = onHandQty - quantity;
+            updateProduct(quantity, productId, newQty, data[0].price);
         }
     })
 }
