@@ -74,7 +74,7 @@ function getProductInfo(dataObj) {
     connection.query("SELECT stock_quantity, product_name FROM products WHERE item_id = ?", dataObj.productId, (error, data) => {
         if (error) throw error;
         if (data.length === 0) {
-            console.log("Please select a valid item_id!")
+            console.log("\nPlease select a valid item_id!\n")
             addInventory();
         } else {
             let newQty = data[0].stock_quantity + dataObj.quantity;
