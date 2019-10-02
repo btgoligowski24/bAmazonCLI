@@ -73,8 +73,13 @@ function addInventory() {
 function getProductInfo(dataObj) {
     connection.query("SELECT stock_quantity, product_name FROM products WHERE item_id = ?", dataObj.productId, (error, data) => {
         if (error) throw error;
-        let newQty = data[0].stock_quantity + dataObj.quantity;
-        updateProduct(dataObj.quantity, dataObj.productId, newQty, data[0].product_name);
+        if (data.length === 0) {
+            console.log("Please select a valid item_id!")
+            addInventory();
+        } else {
+            let newQty = data[0].stock_quantity + dataObj.quantity;
+            updateProduct(dataObj.quantity, dataObj.productId, newQty, data[0].product_name);    
+        }
     })
 }
 
